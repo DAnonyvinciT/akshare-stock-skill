@@ -1,0 +1,62 @@
+# AKShare Stock Skill 配置文件
+
+# 监控股票列表
+watchlist:
+  - code: "002475"
+    name: "立讯精密"
+  - code: "600519"
+    name: "贵州茅台"
+  - code: "000001"
+    name: "平安银行"
+
+# 定时任务配置
+scheduler:
+  # 是否启用定时任务
+  enabled: true
+  
+  # 每日收盘后自动获取数据 (格式: HH:MM)
+  daily_fetch_time: "15:30"
+  
+  # 每周生成分析报告 (0=周一, 6=周日)
+  weekly_report_day: 4  # 周五
+  weekly_report_time: "18:00"
+
+# 缓存配置  
+cache:
+  # 缓存过期时间（秒）
+  realtime: 60           # 实时行情
+  daily_kline: 3600      # 日K线
+  financial: 604800      # 财务数据 (7天)
+  shareholders: 2592000  # 股东数据 (30天)
+  dividend: 2592000      # 分红数据 (30天)
+  valuation: 3600        # 估值数据
+  fund_flow: 3600        # 资金流向
+
+# 报告输出配置
+output:
+  # 报告保存目录
+  report_dir: "./reports"
+  
+  # 报告格式
+  format: "markdown"  # markdown / html
+  
+  # 是否包含图表 (需要 matplotlib)
+  include_charts: false
+
+# 通知配置 (可选)
+notification:
+  enabled: false
+  
+  # 邮件通知
+  email:
+    enabled: false
+    smtp_server: "smtp.example.com"
+    smtp_port: 465
+    username: ""
+    password: ""
+    recipient: ""
+  
+  # 企业微信通知
+  wechat:
+    enabled: false
+    webhook_url: ""
