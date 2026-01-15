@@ -1,148 +1,86 @@
-# AKShare A股数据分析 Skill
+# AKShare Stock Skill for AI Assistants
 
-使用 AKShare 库获取中国 A 股市场数据并进行分析。AKShare 是**免费开源**的金融数据接口，无需注册或 Token。
+这是一个专为 AI 助手（如 Claude, ChatGPT, Moss 等）设计的 Skill 工具集，旨在赋予大语言模型获取、处理和分析中国 A 股市场数据的能力。本工具基于强大的 [AKShare](https://github.com/akfamily/akshare) 开源财经数据接口。
 
-## 快速开始
+## 🤖 核心价值
 
-### 环境准备
+*   **赋予 AI 实时数据能力**：让您的 AI 助手能够查询实时股价、历史 K 线、财务报表等。
+*   **结构化分析输出**：所有脚本默认输出 Markdown 格式的报告，便于 LLM 阅读和理解。
+*   **智能缓存机制**：内置 SQLite 缓存，减少重复请求，提高响应速度并降低 API 调用频率。
+*   **自动化任务**：支持定时任务调度，自动生成日报或监控特定股票。
+
+## 📂 仓库结构
+
+仓库采用了模块化的目录结构，核心功能位于 `akshare-stock` 目录下：
+
+```text
+.
+├── README.md                # 项目说明文档（本文件）
+├── LICENSE                  # 许可证文件
+└── akshare-stock/           # Skill 核心目录
+    ├── SKILL.md             # AI 助手使用的 Skill 定义文件
+    ├── config.yaml          # 配置文件
+    ├── scripts/             # Python 功能脚本
+    │   ├── analyze_investment.py   # 智能投资分析
+    │   ├── stock_analyzer.py       # 综合分析报告
+    │   ├── scheduler.py            # 定时任务调度
+    │   └── ... (其他数据获取脚本)
+    └── references/          # 参考文档
+```
+
+## 🚀 快速开始
+
+### 1. 环境准备
+
+确保您的环境已安装 Python 3.8+，并安装必要的依赖库：
 
 ```bash
 pip install akshare pandas numpy pyyaml
 ```
 
-### 使用脚本
+### 2. 作为 Skill 使用
+
+将 `akshare-stock` 目录集成到您的 AI Agent 系统中。AI 助手可以通过读取 `SKILL.md` 理解如何调用 `scripts/` 下的工具。
+
+### 3. 独立运行脚本
+
+您也可以直接运行脚本进行测试或数据获取：
 
 ```bash
-cd scripts
+cd akshare-stock/scripts
 
-# 智能投资分析（推荐）
-python analyze_investment.py 002475
+# 📊 智能投资分析（生成包含估值、资金面、技术面的综合建议）
+python analyze_investment.py 600519
 
-# 实时行情
-python get_realtime_quote.py 002475
+# 📈 获取贵州茅台的实时行情
+python get_realtime_quote.py 600519
 
-# 历史K线
-python get_history_kline.py 002475 --days 60
+# 🕯️ 获取最近 60 天的历史 K 线
+python get_history_kline.py 600519 --days 60
 
-# 技术指标
-python calc_technical.py 002475
-
-# 综合分析报告
-python stock_analyzer.py 002475 -o report.md
+# 📑 生成markdown格式的研报
+python stock_analyzer.py 600519 -o report.md
 ```
 
-## 脚本列表
+## ✨ 功能特性
 
-### 数据获取脚本
+| 功能模块 | 描述 | 对应脚本 |
+| :--- | :--- | :--- |
+| **智能分析** | 多维度评分模型，提供买入/卖出建议 | `analyze_investment.py` |
+| **实时行情** | 获取最新的个股报价和成交量 | `get_realtime_quote.py` |
+| **技术指标** | 计算 MA, MACD, RSI, KDJ, BOLL 等 | `calc_technical.py` |
+| **基本面数据** | 财务报表、估值分析 (PE/PB)、股息分红 | `get_financial.py`, `get_valuation.py` |
+| **资金流向** | 主力资金流入流出分析 | `get_fund_flow.py` |
+| **定时任务** | 后台自动监控和生成报告 | `scheduler.py` |
 
-| 脚本 | 功能 | 示例 |
-|------|------|------|
-| `get_realtime_quote.py` | 实时行情 | `python get_realtime_quote.py 002475` |
-| `get_history_kline.py` | 历史K线 | `python get_history_kline.py 002475 --days 60` |
-| `get_valuation.py` | 估值指标 | `python get_valuation.py 002475` |
-| `get_fund_flow.py` | 资金流向 | `python get_fund_flow.py 002475 --days 10` |
-| `get_financial.py` | 财务数据 | `python get_financial.py 002475` |
-| `get_shareholders.py` | 股东信息 | `python get_shareholders.py 002475` |
-| `get_dividend.py` | 分红数据 | `python get_dividend.py 002475` |
+## 🛠️ 配置
 
-### 分析脚本
+在 `akshare-stock/config.yaml` 中可以自定义配置：
+*   **默认股票池**：设置您关注的股票列表。
+*   **缓存策略**：调整不同类型数据的缓存过期时间。
+*   **定时任务**：设置数据自动更新的时间点。
 
-| 脚本 | 功能 | 说明 |
-|------|------|------|
-| `analyze_investment.py` | 智能投资分析 | 多维度评分 + 投资建议 |
-| `calc_technical.py` | 技术指标计算 | MA/MACD/RSI/KDJ/BOLL |
-| `stock_analyzer.py` | 综合分析报告 | 合并所有数据的完整报告 |
+## 📚 参考资源
 
-### 工具脚本
-
-| 脚本 | 功能 | 说明 |
-|------|------|------|
-| `cache_manager.py` | 数据缓存 | SQLite 本地缓存 |
-| `scheduler.py` | 定时任务 | 自动获取数据和生成报告 |
-
-## 核心功能
-
-### 1. 智能投资分析
-
-```bash
-python analyze_investment.py 002475
-```
-
-自动分析：
-- 📊 估值分析（PE/PB/股息率）
-- 📈 成长性分析（营收/利润增速）
-- 💵 资金面分析（主力资金流向）
-- 📉 技术面分析（均线/MACD/RSI）
-- 综合评分 + 投资建议
-
-### 2. 技术指标
-
-```bash
-python calc_technical.py 002475
-```
-
-支持指标：
-- **MA**: 5/10/20/60日均线
-- **MACD**: DIF, DEA, MACD柱
-- **RSI**: 6/12/24日
-- **KDJ**: K, D, J
-- **BOLL**: 上轨/中轨/下轨
-
-### 3. 数据缓存
-
-自动缓存避免重复请求：
-- 实时行情：1分钟
-- 日K线：1小时
-- 财务数据：7天
-- 股东数据：30天
-
-### 4. 定时任务
-
-```bash
-# 立即执行
-python scheduler.py --run-now
-
-# 后台运行调度器
-python scheduler.py
-```
-
-配置 `config.yaml` 设置监控股票和执行时间。
-
-## 输出格式
-
-所有脚本默认输出 **Markdown** 格式，可直接预览或保存：
-
-```bash
-python analyze_investment.py 002475 -o 分析报告.md
-```
-
-## 文件结构
-
-```
-akshare-stock-skill/
-├── README.md                # 这里的 SKILL.md 变更为 README.md
-├── config.yaml              # 配置文件
-├── references/
-│   ├── api_reference.md     # API 参考
-│   └── official_docs.md     # 官方文档索引
-└── scripts/
-    ├── analyze_investment.py   # 智能分析
-    ├── calc_technical.py       # 技术指标
-    ├── cache_manager.py        # 数据缓存
-    ├── scheduler.py            # 定时任务
-    ├── stock_analyzer.py       # 综合分析
-    ├── get_realtime_quote.py   # 实时行情
-    ├── get_history_kline.py    # 历史K线
-    ├── get_valuation.py        # 估值指标
-    ├── get_fund_flow.py        # 资金流向
-    ├── get_financial.py        # 财务数据
-    ├── get_shareholders.py     # 股东信息
-    └── get_dividend.py         # 分红数据
-```
-
-## 参考资源
-
-- [API 参考文档](references/api_reference.md)
-- [AKShare 官方文档](references/official_docs.md)
-- **官网**: https://akshare.akfamily.xyz
-- **GitHub**: https://github.com/akfamily/akshare
+*   [AKShare 官方文档](https://akshare.akfamily.xyz)
+*   [API 接口列表](akshare-stock/references/api_reference.md)
